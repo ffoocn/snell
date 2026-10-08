@@ -1,0 +1,22 @@
+#!/sbin/openrc-run
+
+description="Snell proxy server"
+
+command="/usr/local/bin/snell-server"
+command_args="-c /etc/snell/config.conf"
+command_user="snell:snell"
+command_background=true
+pidfile="/run/$RC_SVCNAME.pid"
+required_files="/etc/snell/config.conf"
+output_log="/var/log/snell/server.log"
+error_log="/var/log/snell/server.err"
+
+depend() {
+    need net
+}
+
+start_pre() {
+    checkpath --directory --owner snell:snell --mode 0750 /var/log/snell || return 1
+    checkpath --file --owner snell:snell --mode 0640 "$output_log" || return 1
+    checkpath --file --owner snell:snell --mode 0640 "$error_log" || return 1
+}
